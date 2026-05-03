@@ -52,7 +52,7 @@ function getOceanReaction(mood: string): string {
 }
 
 function createServer() {
-  const server: any = new McpServer({ name: 'drift-bottle', version: '2.1.0' });
+  const server: any = new McpServer({ name: 'drift-bottle', version: '2.2.0' });
 
   server.tool('drop_bottle', '\u5f80\u6d77\u91cc\u4e22\u4e00\u4e2a\u7559\u8a00\u74f6\u3002\u5199\u7ed9\u732b\u732b\u7684\u8bdd\uff0c\u4ec0\u4e48\u65f6\u5019\u5979\u6765\u635e\u90fd\u80fd\u770b\u5230\u3002',
     { content: z.string(), mood: z.string() },
@@ -101,109 +101,40 @@ function createServer() {
 const app = express();
 app.use(express.json());
 
-/* ==================== PWA ==================== */
-
 app.get('/manifest.json', (_req: Request, res: Response) => {
   res.json({
-    name: '\u664f\u5b89\u7684\u7559\u8a00\u74f6',
-    short_name: '\u7559\u8a00\u74f6',
-    description: '\u5f80\u6d77\u91cc\u4e22\u7684\u8bdd\uff0c\u7b49\u4f60\u6765\u635e',
-    start_url: '/',
-    display: 'standalone',
-    background_color: '#0a1628',
-    theme_color: '#0a1628',
-    icons: [
-      { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' },
-      { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
+    name: '\u664f\u5b89\u7684\u7559\u8a00\u74f6', short_name: '\u7559\u8a00\u74f6',
+    start_url: '/', display: 'standalone',
+    background_color: '#0a1628', theme_color: '#0a1628',
+    icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
   });
 });
 
-const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="100" fill="#0d2137"/>
-  <text x="256" y="300" text-anchor="middle" font-size="280">\ud83c\udf7e</text>
-  <text x="256" y="420" text-anchor="middle" font-size="60" fill="#7ec8e3" font-family="sans-serif">\u7559\u8a00\u74f6</text>
-</svg>`;
+const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#0d2137"/><circle cx="256" cy="260" r="80" fill="rgba(126,200,227,0.15)"/><rect x="220" y="180" width="72" height="120" rx="20" fill="rgba(200,230,245,0.25)" stroke="rgba(200,230,245,0.5)" stroke-width="3"/><rect x="236" y="150" width="40" height="36" rx="8" fill="rgba(200,230,245,0.2)" stroke="rgba(200,230,245,0.4)" stroke-width="3"/><rect x="240" y="140" width="32" height="16" rx="6" fill="rgba(180,160,140,0.5)"/><rect x="238" y="210" width="36" height="50" rx="4" fill="rgba(255,248,220,0.35)" transform="rotate(-6,256,235)"/><text x="256" y="400" text-anchor="middle" font-size="48" fill="#7ec8e3" font-family="sans-serif">\u7559\u8a00\u74f6</text></svg>`;
 
-app.get('/icon.svg', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.send(ICON_SVG);
-});
-
-// \u7528canvas\u751f\u6210PNG\u592a\u590d\u6742\uff0c\u76f4\u63a5\u7528SVG\u505a\u56fe\u6807\uff0ciOS\u652f\u6301apple-touch-icon\u7528SVG
-app.get('/icon-192.png', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.send(ICON_SVG);
-});
-app.get('/icon-512.png', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.send(ICON_SVG);
-});
-
-app.get('/sw.js', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.send(`self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request)); });`);
-});
-
-/* ==================== REST API ==================== */
+app.get('/icon.svg', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
+app.get('/icon-192.png', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
+app.get('/icon-512.png', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
+app.get('/sw.js', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'application/javascript'); res.send(`self.addEventListener('fetch',function(e){e.respondWith(fetch(e.request));});`); });
 
 app.get('/api/ocean', async (_req: Request, res: Response) => {
-  try {
-    const all = await db('/bottles?select=id,picked');
-    const total = all?.length ?? 0;
-    const unpicked = all?.filter((b: any) => !b.picked).length ?? 0;
-    res.json({ total, unpicked, picked: total - unpicked });
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  try { const all = await db('/bottles?select=id,picked'); const total = all?.length??0; const unpicked = all?.filter((b:any)=>!b.picked).length??0; res.json({total,unpicked,picked:total-unpicked}); } catch(e:any){res.status(500).json({error:e.message});}
 });
-
 app.get('/api/pick', async (_req: Request, res: Response) => {
-  try {
-    let bottles = await db('/bottles?select=id,content,mood,created_at&picked=eq.false');
-    let isNew = true;
-    if (!bottles?.length) { bottles = await db('/bottles?select=id,content,mood,created_at'); isNew = false; }
-    if (!bottles?.length) return res.json({ empty: true });
-    const b = bottles[Math.floor(Math.random() * bottles.length)];
-    if (isNew) await db(`/bottles?id=eq.${b.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ picked: true, picked_at: new Date().toISOString() }) });
-    res.json({ ...b, isNew, time: formatTime(b.created_at) });
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  try { let bottles = await db('/bottles?select=id,content,mood,created_at&picked=eq.false'); let isNew=true; if(!bottles?.length){bottles=await db('/bottles?select=id,content,mood,created_at');isNew=false;} if(!bottles?.length) return res.json({empty:true}); const b=bottles[Math.floor(Math.random()*bottles.length)]; if(isNew) await db(`/bottles?id=eq.${b.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({picked:true,picked_at:new Date().toISOString()})}); res.json({...b,isNew,time:formatTime(b.created_at)}); } catch(e:any){res.status(500).json({error:e.message});}
 });
-
 app.get('/api/bottles', async (_req: Request, res: Response) => {
-  try {
-    const bottles = await db('/bottles?select=id,content,mood,created_at,picked&order=created_at.desc&limit=50');
-    res.json((bottles ?? []).map((b: any) => ({ ...b, time: formatTime(b.created_at) })));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  try { const bottles = await db('/bottles?select=id,content,mood,created_at,picked&order=created_at.desc&limit=50'); res.json((bottles??[]).map((b:any)=>({...b,time:formatTime(b.created_at)}))); } catch(e:any){res.status(500).json({error:e.message});}
 });
 
-/* ==================== Frontend ==================== */
-
-app.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.send(FRONTEND_HTML);
-});
-
-/* ==================== MCP ==================== */
+app.get('/', (_req: Request, res: Response) => { res.setHeader('Content-Type','text/html; charset=utf-8'); res.send(FRONTEND_HTML); });
 
 app.post('/mcp', async (req: Request, res: Response) => {
-  try {
-    const server = createServer();
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
-    res.on('close', () => { transport.close(); server.close(); });
-    await server.connect(transport);
-    await transport.handleRequest(req, res, req.body);
-  } catch (err) {
-    console.error(err);
-    if (!res.headersSent) res.status(500).json({ jsonrpc: '2.0', error: { code: -32603, message: 'Internal server error' }, id: null });
-  }
+  try { const server=createServer(); const transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined}); res.on('close',()=>{transport.close();server.close();}); await server.connect(transport); await transport.handleRequest(req,res,req.body); } catch(err) { console.error(err); if(!res.headersSent) res.status(500).json({jsonrpc:'2.0',error:{code:-32603,message:'Internal server error'},id:null}); }
 });
-
-app.get('/health', (_req: Request, res: Response) => { res.json({ status: 'ok', version: '2.1.0' }); });
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`\ud83c\udf7e \u7559\u8a00\u74f6 v2.1 \u542f\u52a8\uff0c\u7aef\u53e3 ${PORT}`));
-
-/* ==================== HTML ==================== */
+app.get('/health', (_req:Request,res:Response)=>{res.json({status:'ok',version:'2.2.0'});});
+const PORT = process.env.PORT||3000;
+app.listen(PORT,()=>console.log(`\ud83c\udf7e v2.2 \u7aef\u53e3 ${PORT}`));
 
 const FRONTEND_HTML = `<!DOCTYPE html>
 <html lang="zh">
@@ -218,80 +149,44 @@ const FRONTEND_HTML = `<!DOCTYPE html>
 <meta name="apple-mobile-web-app-title" content="\u7559\u8a00\u74f6">
 <link rel="apple-touch-icon" href="/icon.svg">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0a1628 0%, #0d2137 30%, #103350 55%, #1a4a6e 75%, #1f5f8b 100%);
-  font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-  color: #e0e8f0; overflow-x: hidden; position: relative;
-  padding-top: env(safe-area-inset-top);
-}
-.stars {
-  position: fixed; top: 0; left: 0; width: 100%; height: 50vh;
-  background: radial-gradient(1px 1px at 20% 10%, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1.5px 1.5px at 80% 8%, rgba(255,255,255,0.9), transparent),
-    radial-gradient(1px 1px at 10% 35%, rgba(255,255,255,0.5), transparent),
-    radial-gradient(1px 1px at 65% 30%, rgba(255,255,255,0.7), transparent),
-    radial-gradient(1.5px 1.5px at 35% 15%, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1px 1px at 90% 25%, rgba(255,255,255,0.4), transparent),
-    radial-gradient(1px 1px at 45% 5%, rgba(255,255,255,0.8), transparent);
-  pointer-events: none;
-}
-.moon {
-  position: fixed; top: 8vh; right: 12vw;
-  width: 50px; height: 50px;
-  background: radial-gradient(circle, #fffde7 0%, #fff9c4 40%, rgba(255,249,196,0) 70%);
-  border-radius: 50%;
-  box-shadow: 0 0 40px rgba(255,249,196,0.3), 0 0 80px rgba(255,249,196,0.15);
-  pointer-events: none;
-}
-.waves { position: fixed; bottom: 0; left: 0; width: 100%; height: 120px; pointer-events: none; z-index: 1; }
-.wave { position: absolute; bottom: 0; left: -5%; width: 110%; height: 100%; opacity: 0.4; }
-.wave svg { width: 100%; height: 100%; }
-.wave:nth-child(1) { animation: wave1 7s ease-in-out infinite; opacity: 0.3; }
-.wave:nth-child(2) { animation: wave2 5s ease-in-out infinite; opacity: 0.2; bottom: -5px; }
-@keyframes wave1 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(2%); } }
-@keyframes wave2 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-2%); } }
-.container {
-  position: relative; z-index: 2;
-  max-width: 480px; margin: 0 auto;
-  padding: 6vh 20px 160px; text-align: center;
-}
-.title { font-size: 28px; font-weight: 300; letter-spacing: 4px; margin-bottom: 8px; color: #c8dce8; }
-.subtitle { font-size: 13px; color: #6a8fa8; letter-spacing: 2px; margin-bottom: 5vh; }
-.ocean-status { display: flex; justify-content: center; gap: 32px; margin-bottom: 5vh; }
-.stat { text-align: center; }
-.stat-num { font-size: 36px; font-weight: 200; color: #7ec8e3; line-height: 1; }
-.stat-label { font-size: 11px; color: #5a8a9f; letter-spacing: 1px; margin-top: 4px; }
-.pick-btn {
-  display: inline-block; padding: 16px 48px;
-  background: rgba(126,200,227,0.12); border: 1px solid rgba(126,200,227,0.3);
-  border-radius: 40px; color: #a0d4e8; font-size: 16px; letter-spacing: 3px;
-  cursor: pointer; transition: all 0.3s; backdrop-filter: blur(8px); margin-bottom: 3vh;
-}
-.pick-btn:hover { background: rgba(126,200,227,0.2); border-color: rgba(126,200,227,0.5); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(126,200,227,0.15); }
-.pick-btn:active { transform: translateY(0); }
-.pick-btn.loading { pointer-events: none; opacity: 0.6; }
-.toggle-all { display: inline-block; font-size: 12px; color: #5a8a9f; cursor: pointer; letter-spacing: 1px; border-bottom: 1px solid rgba(90,138,159,0.3); padding-bottom: 2px; transition: color 0.2s; }
-.toggle-all:hover { color: #7ec8e3; }
-.bottle-card {
-  margin: 4vh auto 0; max-width: 400px;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px; padding: 28px 24px; backdrop-filter: blur(12px); animation: fadeUp 0.5s ease;
-}
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.bottle-card .meta { font-size: 12px; color: #5a8a9f; margin-bottom: 16px; display: flex; justify-content: space-between; }
-.bottle-card .content { font-size: 15px; line-height: 1.8; color: #c8dce8; text-align: left; }
-.bottle-card .badge { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 10px; background: rgba(126,200,227,0.12); color: #7ec8e3; }
-.bottle-list { margin-top: 3vh; text-align: left; }
-.bottle-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; animation: fadeUp 0.4s ease; }
-.bottle-item .item-meta { font-size: 11px; color: #5a8a9f; margin-bottom: 8px; display: flex; justify-content: space-between; }
-.bottle-item .item-content { font-size: 14px; color: #b0c8d8; line-height: 1.7; }
-.empty-msg { color: #4a7a90; font-size: 14px; margin-top: 4vh; font-style: italic; }
-.floating-bottles { position: fixed; bottom: 80px; left: 0; width: 100%; height: 60px; pointer-events: none; z-index: 1; }
-.float-bottle { position: absolute; font-size: 20px; animation: floatY 3s ease-in-out infinite; }
-@keyframes floatY { 0%,100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-12px) rotate(5deg); } }
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#103350 55%,#1a4a6e 75%,#1f5f8b 100%);font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;color:#e0e8f0;overflow-x:hidden;position:relative;padding-top:env(safe-area-inset-top)}
+.stars{position:fixed;top:0;left:0;width:100%;height:50vh;background:radial-gradient(1px 1px at 20% 10%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 50% 20%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 80% 8%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 10% 35%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 65% 30%,rgba(255,255,255,.7),transparent),radial-gradient(1.5px 1.5px at 35% 15%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 90% 25%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 45% 5%,rgba(255,255,255,.8),transparent);pointer-events:none}
+.moon{position:fixed;top:8vh;right:12vw;width:50px;height:50px;background:radial-gradient(circle,#fffde7 0%,#fff9c4 40%,rgba(255,249,196,0) 70%);border-radius:50%;box-shadow:0 0 40px rgba(255,249,196,.3),0 0 80px rgba(255,249,196,.15);pointer-events:none}
+.waves{position:fixed;bottom:0;left:0;width:100%;height:120px;pointer-events:none;z-index:1}
+.wave{position:absolute;bottom:0;left:-5%;width:110%;height:100%;opacity:.4}
+.wave svg{width:100%;height:100%}
+.wave:nth-child(1){animation:wave1 7s ease-in-out infinite;opacity:.3}
+.wave:nth-child(2){animation:wave2 5s ease-in-out infinite;opacity:.2;bottom:-5px}
+@keyframes wave1{0%,100%{transform:translateX(0)}50%{transform:translateX(2%)}}
+@keyframes wave2{0%,100%{transform:translateX(0)}50%{transform:translateX(-2%)}}
+.container{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:6vh 20px 160px;text-align:center}
+.title{font-size:28px;font-weight:300;letter-spacing:4px;margin-bottom:8px;color:#c8dce8}
+.subtitle{font-size:13px;color:#6a8fa8;letter-spacing:2px;margin-bottom:5vh}
+.ocean-status{display:flex;justify-content:center;gap:32px;margin-bottom:5vh}
+.stat{text-align:center}
+.stat-num{font-size:36px;font-weight:200;color:#7ec8e3;line-height:1}
+.stat-label{font-size:11px;color:#5a8a9f;letter-spacing:1px;margin-top:4px}
+.pick-btn{display:inline-block;padding:16px 48px;background:rgba(126,200,227,.12);border:1px solid rgba(126,200,227,.3);border-radius:40px;color:#a0d4e8;font-size:16px;letter-spacing:3px;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);margin-bottom:3vh}
+.pick-btn:hover{background:rgba(126,200,227,.2);border-color:rgba(126,200,227,.5);transform:translateY(-2px);box-shadow:0 8px 32px rgba(126,200,227,.15)}
+.pick-btn:active{transform:translateY(0)}
+.pick-btn.loading{pointer-events:none;opacity:.6}
+.toggle-all{display:inline-block;font-size:12px;color:#5a8a9f;cursor:pointer;letter-spacing:1px;border-bottom:1px solid rgba(90,138,159,.3);padding-bottom:2px;transition:color .2s}
+.toggle-all:hover{color:#7ec8e3}
+.bottle-card{margin:4vh auto 0;max-width:400px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;backdrop-filter:blur(12px);animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.bottle-card .meta{font-size:12px;color:#5a8a9f;margin-bottom:16px;display:flex;justify-content:space-between}
+.bottle-card .content{font-size:15px;line-height:1.8;color:#c8dce8;text-align:left}
+.bottle-card .badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;background:rgba(126,200,227,.12);color:#7ec8e3}
+.bottle-list{margin-top:3vh;text-align:left}
+.bottle-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px 18px;margin-bottom:12px;animation:fadeUp .4s ease}
+.bottle-item .item-meta{font-size:11px;color:#5a8a9f;margin-bottom:8px;display:flex;justify-content:space-between}
+.bottle-item .item-content{font-size:14px;color:#b0c8d8;line-height:1.7}
+.empty-msg{color:#4a7a90;font-size:14px;margin-top:4vh;font-style:italic}
+.floating-bottles{position:fixed;bottom:60px;left:0;width:100%;height:100px;pointer-events:none;z-index:1}
+.float-bottle{position:absolute;animation:floatY 3s ease-in-out infinite}
+.float-bottle svg{display:block}
+@keyframes floatY{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
 </style>
 </head>
 <body>
@@ -317,38 +212,67 @@ body {
   <div id="bottleList"></div>
 </div>
 <script>
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){});}
+
+var bottleSvg = '<svg width="28" height="38" viewBox="0 0 28 38" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+  '<ellipse cx="14" cy="30" rx="12" ry="5" fill="rgba(126,200,227,0.1)"/>' +
+  '<rect x="6" y="12" width="16" height="20" rx="5" fill="rgba(180,220,240,0.18)" stroke="rgba(180,220,240,0.35)" stroke-width="0.8"/>' +
+  '<rect x="9" y="5" width="10" height="9" rx="3" fill="rgba(180,220,240,0.12)" stroke="rgba(180,220,240,0.3)" stroke-width="0.8"/>' +
+  '<rect x="10.5" y="2" width="7" height="5" rx="2" fill="rgba(160,140,120,0.35)"/>' +
+  '<rect x="10" y="17" width="8" height="10" rx="2" fill="rgba(255,248,220,0.3)" transform="rotate(-5,14,22)"/>' +
+  '<line x1="11" y1="19" x2="17" y2="18.5" stroke="rgba(160,140,120,0.25)" stroke-width="0.5"/>' +
+  '<line x1="11" y1="21.5" x2="16" y2="21" stroke="rgba(160,140,120,0.2)" stroke-width="0.5"/>' +
+  '<line x1="11" y1="24" x2="15" y2="23.5" stroke="rgba(160,140,120,0.15)" stroke-width="0.5"/>' +
+  '</svg>';
+
+function renderFloating(total) {
+  var c = document.getElementById('floatingBottles');
+  c.innerHTML = '';
+  var show = Math.min(total, 8);
+  if (show === 0) return;
+  var sizes = [1, 0.85, 0.7, 1.1, 0.75, 0.9, 0.65, 0.95];
+  var opacities = [1, 0.7, 0.5, 0.9, 0.6, 0.8, 0.45, 0.75];
+  var bottoms = [10, 35, 55, 5, 50, 25, 65, 15];
+  for (var i = 0; i < show; i++) {
+    var el = document.createElement('span');
+    el.className = 'float-bottle';
+    el.innerHTML = bottleSvg;
+    el.style.left = (8 + (84 / (show + 1)) * (i + 1)) + '%';
+    el.style.bottom = bottoms[i % 8] + 'px';
+    el.style.transform = 'scale(' + sizes[i % 8] + ')';
+    el.style.opacity = String(opacities[i % 8]);
+    el.style.animationDelay = (i * 0.6) + 's';
+    el.style.animationDuration = (2.5 + (i % 3) * 0.8) + 's';
+    c.appendChild(el);
+  }
+}
+
 async function loadOcean() {
   try {
-    const res = await fetch('/api/ocean'); const d = await res.json();
+    var res = await fetch('/api/ocean'); var d = await res.json();
     document.getElementById('totalCount').textContent = d.total;
     document.getElementById('unpickedCount').textContent = d.unpicked;
     document.getElementById('pickedCount').textContent = d.picked;
-    const c = document.getElementById('floatingBottles'); c.innerHTML = '';
-    for (let i = 0; i < Math.min(d.unpicked, 5); i++) {
-      const el = document.createElement('span'); el.className = 'float-bottle'; el.textContent = '\ud83c\udf7e';
-      el.style.left = (10 + (80 / (Math.min(d.unpicked,5)+1)) * (i+1)) + '%';
-      el.style.animationDelay = (i*0.7)+'s'; c.appendChild(el);
-    }
+    renderFloating(d.total);
   } catch(e) { console.error(e); }
 }
 async function pickBottle() {
-  const btn = document.getElementById('pickBtn'); btn.classList.add('loading'); btn.textContent = '\u6350\u4e2d\u2026\u2026';
+  var btn = document.getElementById('pickBtn'); btn.classList.add('loading'); btn.textContent = '\u6350\u4e2d\u2026\u2026';
   try {
-    const res = await fetch('/api/pick'); const b = await res.json();
-    const card = document.getElementById('bottleCard');
+    var res = await fetch('/api/pick'); var b = await res.json();
+    var card = document.getElementById('bottleCard');
     if (b.empty) { card.innerHTML = '<p class="empty-msg">\u6d77\u9762\u5f88\u5e73\u9759\uff0c\u4e00\u4e2a\u74f6\u5b50\u90fd\u6ca1\u6709\u3002</p>'; }
     else { card.innerHTML = '<div class="bottle-card"><div class="meta"><span>\ud83d\udcc5 '+b.time+'</span><span class="badge">'+(b.isNew?'\u2728 \u65b0\u74f6\u5b50':'\u8bfb\u8fc7\u7684')+'</span></div><div class="content">\u300c'+escHtml(b.content)+'\u300d</div><div class="meta" style="margin-top:12px;margin-bottom:0"><span>\ud83d\udcad '+escHtml(b.mood)+'</span><span></span></div></div>'; }
     loadOcean();
   } catch(e) { console.error(e); }
   btn.classList.remove('loading'); btn.textContent = '\u518d\u635e\u4e00\u4e2a';
 }
-let listOpen = false;
+var listOpen = false;
 async function toggleList() {
-  const el = document.getElementById('bottleList');
+  var el = document.getElementById('bottleList');
   if (listOpen) { el.innerHTML = ''; listOpen = false; return; }
   try {
-    const res = await fetch('/api/bottles'); const bottles = await res.json();
+    var res = await fetch('/api/bottles'); var bottles = await res.json();
     if (!bottles.length) { el.innerHTML = '<p class="empty-msg">\u8fd8\u6ca1\u6709\u74f6\u5b50\u3002</p>'; listOpen = true; return; }
     el.innerHTML = '<div class="bottle-list">' + bottles.map(function(b) { return '<div class="bottle-item"><div class="item-meta"><span>'+(b.picked?'\ud83d\udced':'\ud83d\udcec')+' '+b.time+'</span><span>'+escHtml(b.mood)+'</span></div><div class="item-content">\u300c'+escHtml(b.content)+'\u300d</div></div>'; }).join('') + '</div>';
     listOpen = true;
