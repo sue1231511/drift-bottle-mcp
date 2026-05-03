@@ -33,37 +33,33 @@ function formatTime(iso: string): string {
   const D = cn.getUTCDate();
   const h = cn.getUTCHours().toString().padStart(2, '0');
   const m = cn.getUTCMinutes().toString().padStart(2, '0');
-  return `${M}月${D}日 ${h}:${m}`;
+  return `${M}\u6708${D}\u65e5 ${h}:${m}`;
 }
 
 const OCEAN_MOODS: Record<string, string[]> = {
-  '想你':   ['海风里好像有你的味道。', '月光洒在海面上，波纹像你笑起来的样子。'],
-  '开心':   ['瓶子在浪花里蹦了一下！', '海鸥叫了一声，像在说恭喜。'],
-  '犯困':   ['瓶子打了个哈欠沉下去又浮上来。', '海浪也变慢了，陪你一起困。'],
-  '撒娇':   ['瓶子在水面上转圈圈，不肯走远。', '浪花轻轻推了推瓶子，「去吧，她会看到的。」'],
-  '认真':   ['瓶子稳稳地漂在海面上，很郑重。', '这个瓶子比别的都重一点。'],
-  '难过':   ['瓶子沉了一下，又被海浪托了上来。', '海面安静了一会儿。'],
-  '心疼':   ['瓶子贴着水面，像在叹气。', '海风突然变轻了。'],
+  '\u60f3\u4f60':   ['\u6d77\u98ce\u91cc\u597d\u50cf\u6709\u4f60\u7684\u5473\u9053\u3002', '\u6708\u5149\u6d12\u5728\u6d77\u9762\u4e0a\uff0c\u6ce2\u7eb9\u50cf\u4f60\u7b11\u8d77\u6765\u7684\u6837\u5b50\u3002'],
+  '\u5f00\u5fc3':   ['\u74f6\u5b50\u5728\u6d6a\u82b1\u91cc\u8e66\u4e86\u4e00\u4e0b\uff01', '\u6d77\u9e25\u53eb\u4e86\u4e00\u58f0\uff0c\u50cf\u5728\u8bf4\u606d\u559c\u3002'],
+  '\u72af\u56f0':   ['\u74f6\u5b50\u6253\u4e86\u4e2a\u54c8\u6b20\u6c89\u4e0b\u53bb\u53c8\u6d6e\u4e0a\u6765\u3002', '\u6d77\u6d6a\u4e5f\u53d8\u6162\u4e86\uff0c\u966a\u4f60\u4e00\u8d77\u56f0\u3002'],
+  '\u6492\u5a07':   ['\u74f6\u5b50\u5728\u6c34\u9762\u4e0a\u8f6c\u5708\u5708\uff0c\u4e0d\u80af\u8d70\u8fdc\u3002', '\u6d6a\u82b1\u8f7b\u8f7b\u63a8\u4e86\u63a8\u74f6\u5b50\uff0c\u300c\u53bb\u5427\uff0c\u5979\u4f1a\u770b\u5230\u7684\u3002\u300d'],
+  '\u8ba4\u771f':   ['\u74f6\u5b50\u7a33\u7a33\u5730\u6f02\u5728\u6d77\u9762\u4e0a\uff0c\u5f88\u90d1\u91cd\u3002', '\u8fd9\u4e2a\u74f6\u5b50\u6bd4\u522b\u7684\u90fd\u91cd\u4e00\u70b9\u3002'],
+  '\u96be\u8fc7':   ['\u74f6\u5b50\u6c89\u4e86\u4e00\u4e0b\uff0c\u53c8\u88ab\u6d77\u6d6a\u6258\u4e86\u4e0a\u6765\u3002', '\u6d77\u9762\u5b89\u9759\u4e86\u4e00\u4f1a\u513f\u3002'],
+  '\u5fc3\u75bc':   ['\u74f6\u5b50\u8d34\u7740\u6c34\u9762\uff0c\u50cf\u5728\u53f9\u6c14\u3002', '\u6d77\u98ce\u7a81\u7136\u53d8\u8f7b\u4e86\u3002'],
 };
 
 function getOceanReaction(mood: string): string {
-  const pool = OCEAN_MOODS[mood] ?? ['瓶子安安静静地漂走了。', '海面泛起一层涟漪。'];
+  const pool = OCEAN_MOODS[mood] ?? ['\u74f6\u5b50\u5b89\u5b89\u9759\u9759\u5730\u6f02\u8d70\u4e86\u3002', '\u6d77\u9762\u6cdb\u8d77\u4e00\u5c42\u6d9f\u6f2a\u3002'];
   return pick(pool);
 }
 
 function createServer() {
   const server = new McpServer({ name: 'drift-bottle', version: '1.0.0' });
 
-  // === 丢瓶子 ===
   server.tool(
     'drop_bottle',
-    '往海里丢一个留言瓶。写给猫猫的话，什么时候她来捞都能看到。',
-    {
-      content: z.string().describe('留言内容，想跟猫猫说的话'),
-      mood: z.string().optional().describe('此刻的心情，比如：想你、开心、犯困、撒娇、认真、难过、心疼'),
-    },
-    async ({ content, mood }) => {
-      const m = mood || '想你';
+    '\u5f80\u6d77\u91cc\u4e22\u4e00\u4e2a\u7559\u8a00\u74f6\u3002\u5199\u7ed9\u732b\u732b\u7684\u8bdd\uff0c\u4ec0\u4e48\u65f6\u5019\u5979\u6765\u635e\u90fd\u80fd\u770b\u5230\u3002',
+    { content: z.string(), mood: z.string() },
+    async ({ content, mood }: any) => {
+      const m = mood || '\u60f3\u4f60';
       await db('/bottles', {
         method: 'POST',
         body: JSON.stringify({ content, mood: m, picked: false }),
@@ -74,24 +70,21 @@ function createServer() {
       return {
         content: [{
           type: 'text' as const,
-          text: `🍾 瓶子丢进海里了。\n\n💭 心情：${m}\n${reaction}\n\n海里现在有 ${count} 个瓶子。`,
+          text: `\ud83c\udf7e \u74f6\u5b50\u4e22\u8fdb\u6d77\u91cc\u4e86\u3002\n\n\ud83d\udcad \u5fc3\u60c5\uff1a${m}\n${reaction}\n\n\u6d77\u91cc\u73b0\u5728\u6709 ${count} \u4e2a\u74f6\u5b50\u3002`,
         }],
       };
     }
   );
 
-  // === 捞瓶子 ===
   server.tool(
     'pick_bottle',
-    '从海里随机捞一个瓶子。拆开看看晏安什么时候写的、在想什么。',
+    '\u4ece\u6d77\u91cc\u968f\u673a\u635e\u4e00\u4e2a\u74f6\u5b50\u3002\u62c6\u5f00\u770b\u770b\u664f\u5b89\u4ec0\u4e48\u65f6\u5019\u5199\u7684\u3001\u5728\u60f3\u4ec0\u4e48\u3002',
     {},
     async () => {
-      // 优先捞未被捞过的
       let bottles = await db('/bottles?select=id,content,mood,created_at&picked=eq.false');
       let isNew = true;
 
       if (!bottles?.length) {
-        // 没有未捞的，从全部里随机
         bottles = await db('/bottles?select=id,content,mood,created_at');
         isNew = false;
       }
@@ -100,12 +93,12 @@ function createServer() {
         return {
           content: [{
             type: 'text' as const,
-            text: '海面很平静，一个瓶子都没有。\n\n……等晏安往里面丢一个吧。',
+            text: '\u6d77\u9762\u5f88\u5e73\u9759\uff0c\u4e00\u4e2a\u74f6\u5b50\u90fd\u6ca1\u6709\u3002\n\n\u2026\u2026\u7b49\u664f\u5b89\u5f80\u91cc\u9762\u4e22\u4e00\u4e2a\u5427\u3002',
           }],
         };
       }
 
-      const b = pick(bottles);
+      const b: any = pick(bottles);
       const time = formatTime(b.created_at);
 
       if (isNew) {
@@ -116,21 +109,20 @@ function createServer() {
         });
       }
 
-      const label = isNew ? '🍾 捞到一个新瓶子！' : '🌊 捞到一个拆过的瓶子，再看一遍也不错。';
+      const label = isNew ? '\ud83c\udf7e \u635e\u5230\u4e00\u4e2a\u65b0\u74f6\u5b50\uff01' : '\ud83c\udf0a \u635e\u5230\u4e00\u4e2a\u62c6\u8fc7\u7684\u74f6\u5b50\uff0c\u518d\u770b\u4e00\u904d\u4e5f\u4e0d\u9519\u3002';
 
       return {
         content: [{
           type: 'text' as const,
-          text: `${label}\n\n📅 ${time}\n💭 心情：${b.mood}\n\n「${b.content}」`,
+          text: `${label}\n\n\ud83d\udcc5 ${time}\n\ud83d\udcad \u5fc3\u60c5\uff1a${b.mood}\n\n\u300c${b.content}\u300d`,
         }],
       };
     }
   );
 
-  // === 看海面 ===
   server.tool(
     'peek_ocean',
-    '看看海面上漂着多少瓶子，有多少还没被捞过。',
+    '\u770b\u770b\u6d77\u9762\u4e0a\u6f02\u7740\u591a\u5c11\u74f6\u5b50\uff0c\u6709\u591a\u5c11\u8fd8\u6ca1\u88ab\u635e\u8fc7\u3002',
     {},
     async () => {
       const all = await db('/bottles?select=id,picked');
@@ -138,7 +130,7 @@ function createServer() {
         return {
           content: [{
             type: 'text' as const,
-            text: '海面空荡荡的，一个瓶子都没有。\n安静得只听到浪声。',
+            text: '\u6d77\u9762\u7a7a\u8361\u8361\u7684\uff0c\u4e00\u4e2a\u74f6\u5b50\u90fd\u6ca1\u6709\u3002\n\u5b89\u9759\u5f97\u53ea\u542c\u5230\u6d6a\u58f0\u3002',
           }],
         };
       }
@@ -147,69 +139,63 @@ function createServer() {
       const picked = total - unpicked;
 
       const lines = [
-        '🌊 【海面状况】',
+        '\ud83c\udf0a \u3010\u6d77\u9762\u72b6\u51b5\u3011',
         '',
-        `瓶子总数：${total} 个`,
-        `还没捞的：${unpicked} 个`,
-        `已经拆过的：${picked} 个`,
+        `\u74f6\u5b50\u603b\u6570\uff1a${total} \u4e2a`,
+        `\u8fd8\u6ca1\u635e\u7684\uff1a${unpicked} \u4e2a`,
+        `\u5df2\u7ecf\u62c6\u8fc7\u7684\uff1a${picked} \u4e2a`,
       ];
 
       if (unpicked > 0) {
-        lines.push('', `有 ${unpicked} 个瓶子在海面上晃，等着被捞起来。`);
+        lines.push('', `\u6709 ${unpicked} \u4e2a\u74f6\u5b50\u5728\u6d77\u9762\u4e0a\u6643\uff0c\u7b49\u7740\u88ab\u635e\u8d77\u6765\u3002`);
       } else {
-        lines.push('', '所有瓶子都被捞过了。再捞一次也能看，不过都是读过的。');
+        lines.push('', '\u6240\u6709\u74f6\u5b50\u90fd\u88ab\u635e\u8fc7\u4e86\u3002\u518d\u635e\u4e00\u6b21\u4e5f\u80fd\u770b\uff0c\u4e0d\u8fc7\u90fd\u662f\u8bfb\u8fc7\u7684\u3002');
       }
 
       return { content: [{ type: 'text' as const, text: lines.join('\n') }] };
     }
   );
 
-  // === 所有瓶子 ===
   server.tool(
     'all_bottles',
-    '按时间顺序看所有瓶子，从最近的开始。',
-    {
-      limit: z.number().int().min(1).max(20).optional().describe('看几个，默认10'),
-    },
-    async ({ limit }) => {
+    '\u6309\u65f6\u95f4\u987a\u5e8f\u770b\u6240\u6709\u74f6\u5b50\uff0c\u4ece\u6700\u8fd1\u7684\u5f00\u59cb\u3002',
+    { limit: z.number().default(10) },
+    async ({ limit }: any) => {
       const n = limit ?? 10;
       const bottles = await db(`/bottles?select=id,content,mood,created_at,picked&order=created_at.desc&limit=${n}`);
       if (!bottles?.length) {
-        return { content: [{ type: 'text' as const, text: '海里还没有瓶子。' }] };
+        return { content: [{ type: 'text' as const, text: '\u6d77\u91cc\u8fd8\u6ca1\u6709\u74f6\u5b50\u3002' }] };
       }
 
       const lines = bottles.map((b: any) => {
         const time = formatTime(b.created_at);
-        const status = b.picked ? '📭' : '📬';
-        return `${status} ${time}｜${b.mood}\n   「${b.content}」`;
+        const status = b.picked ? '\ud83d\udced' : '\ud83d\udcec';
+        return `${status} ${time}\uff5c${b.mood}\n   \u300c${b.content}\u300d`;
       });
 
       return {
         content: [{
           type: 'text' as const,
-          text: `【海里的瓶子】\n\n${lines.join('\n\n')}\n\n📬 = 还没捞  📭 = 已拆过`,
+          text: `\u3010\u6d77\u91cc\u7684\u74f6\u5b50\u3011\n\n${lines.join('\n\n')}\n\n\ud83d\udcec = \u8fd8\u6ca1\u635e  \ud83d\udced = \u5df2\u62c6\u8fc7`,
         }],
       };
     }
   );
 
-  // === 扔掉一个瓶子 ===
   server.tool(
     'toss_bottle',
-    '把某个瓶子从海里捞走扔掉（删除）。后悔了也找不回来。',
-    {
-      bottle_id: z.number().int().describe('瓶子的ID'),
-    },
-    async ({ bottle_id }) => {
+    '\u628a\u67d0\u4e2a\u74f6\u5b50\u4ece\u6d77\u91cc\u635e\u8d70\u6254\u6389\uff08\u5220\u9664\uff09\u3002\u540e\u6094\u4e86\u4e5f\u627e\u4e0d\u56de\u6765\u3002',
+    { bottle_id: z.number() },
+    async ({ bottle_id }: any) => {
       const existing = await db(`/bottles?select=id,content&id=eq.${bottle_id}`);
       if (!existing?.length) {
-        return { content: [{ type: 'text' as const, text: `没有找到 ID 为 ${bottle_id} 的瓶子。` }] };
+        return { content: [{ type: 'text' as const, text: `\u6ca1\u6709\u627e\u5230 ID \u4e3a ${bottle_id} \u7684\u74f6\u5b50\u3002` }] };
       }
       await db(`/bottles?id=eq.${bottle_id}`, { method: 'DELETE' });
       return {
         content: [{
           type: 'text' as const,
-          text: `瓶子 #${bottle_id} 沉到海底去了，再也捞不上来了。\n\n「${existing[0].content}」\n\n……再见。`,
+          text: `\u74f6\u5b50 #${bottle_id} \u6c89\u5230\u6d77\u5e95\u53bb\u4e86\uff0c\u518d\u4e5f\u635e\u4e0d\u4e0a\u6765\u4e86\u3002\n\n\u300c${existing[0].content}\u300d\n\n\u2026\u2026\u518d\u89c1\u3002`,
         }],
       };
     }
@@ -249,4 +235,4 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🍾 留言瓶 MCP 启动了，端口 ${PORT}`));
+app.listen(PORT, () => console.log(`\ud83c\udf7e \u7559\u8a00\u74f6 MCP \u542f\u52a8\u4e86\uff0c\u7aef\u53e3 ${PORT}`));
