@@ -291,7 +291,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .ocean-status{display:flex;justify-content:center;gap:32px;margin-bottom:4vh}
 .stat{text-align:center}
 .stat-num{font-size:36px;font-weight:200;color:#7ec8e3;line-height:1}
-.stat-num.dream-num{color:#c4a6e8}
+.stat-num.dream-num{color:rgba(196,166,232,0.6)}
 .stat-label{font-size:11px;color:#5a8a9f;letter-spacing:1px;margin-top:4px}
 .pick-btn{display:inline-block;padding:16px 48px;background:rgba(126,200,227,.12);border:1px solid rgba(126,200,227,.3);border-radius:40px;color:#a0d4e8;font-size:16px;letter-spacing:3px;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);margin-bottom:3vh}
 .pick-btn.dream-btn{background:rgba(196,166,232,.12);border-color:rgba(196,166,232,.3);color:#c4a6e8}
