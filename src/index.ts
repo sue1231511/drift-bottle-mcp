@@ -302,8 +302,8 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .pick-btn.loading{pointer-events:none;opacity:.6}
 .toggle-all{display:inline-block;font-size:12px;color:#5a8a9f;cursor:pointer;letter-spacing:1px;border-bottom:1px solid rgba(90,138,159,.3);padding-bottom:2px;transition:color .2s}
 .toggle-all:hover{color:#7ec8e3}
-.toggle-all.dream-toggle{color:rgba(196,166,232,0.55);border-bottom-color:rgba(196,166,232,.25)}
-.toggle-all.dream-toggle:hover{color:rgba(196,166,232,0.75)}
+.toggle-all.dream-toggle{color:rgba(196,166,232,0.65);border-bottom-color:rgba(196,166,232,.3)}
+.toggle-all.dream-toggle:hover{color:rgba(196,166,232,0.85)}
 .bottle-card{margin:4vh auto 0;max-width:400px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;backdrop-filter:blur(12px);animation:fadeUp .5s ease}
 .bottle-card.dream-card{border-color:rgba(196,166,232,.1);background:rgba(196,166,232,.03)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
