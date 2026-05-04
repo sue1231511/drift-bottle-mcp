@@ -303,7 +303,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .toggle-all{display:inline-block;font-size:12px;color:#5a8a9f;cursor:pointer;letter-spacing:1px;border-bottom:1px solid rgba(90,138,159,.3);padding-bottom:2px;transition:color .2s}
 .toggle-all:hover{color:#7ec8e3}
 .bottle-card{margin:4vh auto 0;max-width:400px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;backdrop-filter:blur(12px);animation:fadeUp .5s ease}
-.bottle-card.dream-card{border-color:rgba(196,166,232,.15);background:rgba(196,166,232,.04)}
+.bottle-card.dream-card{border-color:rgba(196,166,232,.1);background:rgba(196,166,232,.03)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .bottle-card .meta{font-size:12px;color:#5a8a9f;margin-bottom:16px;display:flex;justify-content:space-between}
 .bottle-card .content{font-size:15px;line-height:1.8;color:#c8dce8;text-align:left}
