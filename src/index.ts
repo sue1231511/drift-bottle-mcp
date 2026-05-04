@@ -395,7 +395,7 @@ function renderAction() {
       '<span class="toggle-all" onclick="toggleList()">查看所有留言</span>';
   } else {
     el.innerHTML = '<div class="pick-btn dream-btn" id="pickBtn" onclick="pickBottle()">从海底捞一个梦</div><br><br>' +
-      '<span class="toggle-all" onclick="toggleList()">查看所有梦境</span>';
+      '<span class="toggle-all dream-toggle" onclick="toggleList()">查看所有梦境</span>';
   }
 }
 
