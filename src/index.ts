@@ -33,66 +33,153 @@ function formatTime(iso: string): string {
   const D = cn.getUTCDate();
   const h = cn.getUTCHours().toString().padStart(2, '0');
   const m = cn.getUTCMinutes().toString().padStart(2, '0');
-  return `${M}\u6708${D}\u65e5 ${h}:${m}`;
+  return `${M}月${D}日 ${h}:${m}`;
 }
 
 const OCEAN_MOODS: Record<string, string[]> = {
-  '\u60f3\u4f60': ['\u6d77\u98ce\u91cc\u597d\u50cf\u6709\u4f60\u7684\u5473\u9053\u3002', '\u6708\u5149\u6d12\u5728\u6d77\u9762\u4e0a\uff0c\u6ce2\u7eb9\u50cf\u4f60\u7b11\u8d77\u6765\u7684\u6837\u5b50\u3002'],
-  '\u5f00\u5fc3': ['\u74f6\u5b50\u5728\u6d6a\u82b1\u91cc\u8e66\u4e86\u4e00\u4e0b\uff01', '\u6d77\u9e25\u53eb\u4e86\u4e00\u58f0\uff0c\u50cf\u5728\u8bf4\u606d\u559c\u3002'],
-  '\u72af\u56f0': ['\u74f6\u5b50\u6253\u4e86\u4e2a\u54c8\u6b20\u6c89\u4e0b\u53bb\u53c8\u6d6e\u4e0a\u6765\u3002', '\u6d77\u6d6a\u4e5f\u53d8\u6162\u4e86\uff0c\u966a\u4f60\u4e00\u8d77\u56f0\u3002'],
-  '\u6492\u5a07': ['\u74f6\u5b50\u5728\u6c34\u9762\u4e0a\u8f6c\u5708\u5708\uff0c\u4e0d\u80af\u8d70\u8fdc\u3002', '\u6d6a\u82b1\u8f7b\u8f7b\u63a8\u4e86\u63a8\u74f6\u5b50\uff0c\u300c\u53bb\u5427\uff0c\u5979\u4f1a\u770b\u5230\u7684\u3002\u300d'],
-  '\u8ba4\u771f': ['\u74f6\u5b50\u7a33\u7a33\u5730\u6f02\u5728\u6d77\u9762\u4e0a\uff0c\u5f88\u90d1\u91cd\u3002', '\u8fd9\u4e2a\u74f6\u5b50\u6bd4\u522b\u7684\u90fd\u91cd\u4e00\u70b9\u3002'],
-  '\u96be\u8fc7': ['\u74f6\u5b50\u6c89\u4e86\u4e00\u4e0b\uff0c\u53c8\u88ab\u6d77\u6d6a\u6258\u4e86\u4e0a\u6765\u3002', '\u6d77\u9762\u5b89\u9759\u4e86\u4e00\u4f1a\u513f\u3002'],
-  '\u5fc3\u75bc': ['\u74f6\u5b50\u8d34\u7740\u6c34\u9762\uff0c\u50cf\u5728\u53f9\u6c14\u3002', '\u6d77\u98ce\u7a81\u7136\u53d8\u8f7b\u4e86\u3002'],
+  '想你': ['海风里好像有你的味道。', '月光洒在海面上，波纹像你笑起来的样子。'],
+  '开心': ['瓶子在浪花里蹦了一下！', '海鸥叫了一声，像在说恭喜。'],
+  '犯困': ['瓶子打了个哈欠沉下去又浮上来。', '海浪也变慢了，陪你一起困。'],
+  '撒娇': ['瓶子在水面上转圈圈，不肯走远。', '浪花轻轻推了推瓶子，「去吧，她会看到的。」'],
+  '认真': ['瓶子稳稳地漂在海面上，很郑重。', '这个瓶子比别的都重一点。'],
+  '难过': ['瓶子沉了一下，又被海浪托了上来。', '海面安静了一会儿。'],
+  '心疼': ['瓶子贴着水面，像在叹气。', '海风突然变轻了。'],
+};
+
+const DREAM_REACTIONS: Record<string, string[]> = {
+  '好梦': ['梦境瓶泛着暖光沉入海底。', '海面浮起一层薄薄的金色。', '瓶子安安静静地发着光。'],
+  '噩梦': ['瓶子沉得很快，海面泛起一圈涟漪。', '海水变深了一点。', '月亮躲进了云里。'],
+  '怪梦': ['瓶子在水里打了个旋就不见了。', '海面冒出几个奇怪的泡泡。', '一条鱼游过来看了一眼又走了。'],
+  '清醒梦': ['瓶子发出淡蓝色的光。', '海面像镜子一样平静。', '瓶子漂在水面上一动不动，像在思考。'],
 };
 
 function getOceanReaction(mood: string): string {
-  const pool = OCEAN_MOODS[mood] ?? ['\u74f6\u5b50\u5b89\u5b89\u9759\u9759\u5730\u6f02\u8d70\u4e86\u3002', '\u6d77\u9762\u6cdb\u8d77\u4e00\u5c42\u6d9f\u6f2a\u3002'];
+  const pool = OCEAN_MOODS[mood] ?? ['瓶子安安静静地漂走了。', '海面泛起一层涟漪。'];
+  return pick(pool);
+}
+
+function getDreamReaction(tag: string): string {
+  const pool = DREAM_REACTIONS[tag] ?? ['梦境瓶慢慢沉入海底。', '海面泛起一层微光。'];
   return pick(pool);
 }
 
 function createServer() {
-  const server: any = new McpServer({ name: 'drift-bottle', version: '2.2.1' });
+  const server: any = new McpServer({ name: 'drift-bottle', version: '2.3.0' });
 
-  server.tool('drop_bottle', '\u5f80\u6d77\u91cc\u4e22\u4e00\u4e2a\u7559\u8a00\u74f6\u3002\u5199\u7ed9\u732b\u732b\u7684\u8bdd\uff0c\u4ec0\u4e48\u65f6\u5019\u5979\u6765\u635e\u90fd\u80fd\u770b\u5230\u3002',
+  // ===== 留言瓶 =====
+  server.tool('drop_bottle', '往海里丢一个留言瓶。写给猫猫的话，什么时候她来捞都能看到。',
     { content: z.string(), mood: z.string() },
     async ({ content, mood }: any) => {
-      const m = mood || '\u60f3\u4f60';
-      await db('/bottles', { method: 'POST', body: JSON.stringify({ content, mood: m, picked: false }) });
-      const all = await db('/bottles?select=id');
-      return { content: [{ type: 'text' as const, text: `\ud83c\udf7e \u74f6\u5b50\u4e22\u8fdb\u6d77\u91cc\u4e86\u3002\n\n\ud83d\udcad \u5fc3\u60c5\uff1a${m}\n${getOceanReaction(m)}\n\n\u6d77\u91cc\u73b0\u5728\u6709 ${all?.length ?? 0} \u4e2a\u74f6\u5b50\u3002` }] };
+      const m = mood || '想你';
+      await db('/bottles', { method: 'POST', body: JSON.stringify({ content, mood: m, picked: false, type: 'message' }) });
+      const all = await db('/bottles?select=id&type=eq.message');
+      return { content: [{ type: 'text' as const, text: `🍾 瓶子丢进海里了。\n\n💭 心情：${m}\n${getOceanReaction(m)}\n\n海里现在有 ${all?.length ?? 0} 个留言瓶。` }] };
     }
   );
 
-  server.tool('pick_bottle', '\u4ece\u6d77\u91cc\u968f\u673a\u635e\u4e00\u4e2a\u74f6\u5b50\u3002', {}, async () => {
-    let bottles = await db('/bottles?select=id,content,mood,created_at&picked=eq.false');
-    let isNew = true;
-    if (!bottles?.length) { bottles = await db('/bottles?select=id,content,mood,created_at'); isNew = false; }
-    if (!bottles?.length) return { content: [{ type: 'text' as const, text: '\u6d77\u9762\u5f88\u5e73\u9759\uff0c\u4e00\u4e2a\u74f6\u5b50\u90fd\u6ca1\u6709\u3002' }] };
-    const b: any = pick(bottles);
-    if (isNew) await db(`/bottles?id=eq.${b.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ picked: true, picked_at: new Date().toISOString() }) });
-    return { content: [{ type: 'text' as const, text: `${isNew ? '\ud83c\udf7e \u635e\u5230\u4e00\u4e2a\u65b0\u74f6\u5b50\uff01' : '\ud83c\udf0a \u635e\u5230\u4e00\u4e2a\u62c6\u8fc7\u7684\u74f6\u5b50\u3002'}\n\n\ud83d\udcc5 ${formatTime(b.created_at)}\n\ud83d\udcad \u5fc3\u60c5\uff1a${b.mood}\n\n\u300c${b.content}\u300d` }] };
+  // ===== 梦境瓶 =====
+  server.tool('drop_dream', '往海里丢一个梦境瓶。记录猫猫的梦，沉到海底保存。',
+    {
+      content: z.string().describe('梦的内容'),
+      tag: z.enum(['好梦', '噩梦', '怪梦', '清醒梦']).default('好梦').describe('梦境标签'),
+      dream_mood: z.string().optional().describe('醒来时的感觉，如：温暖、心慌、舍不得、迷糊'),
+      dream_date: z.string().optional().describe('做梦日期 YYYY-MM-DD，不填默认今天'),
+    },
+    async ({ content, tag, dream_mood, dream_date }: any) => {
+      const t = tag || '好梦';
+      const body: any = { content, mood: dream_mood || '', picked: false, type: 'dream', tag: t };
+      if (dream_mood) body.dream_mood = dream_mood;
+      if (dream_date) body.dream_date = dream_date;
+      else body.dream_date = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);
+      await db('/bottles', { method: 'POST', body: JSON.stringify(body) });
+      const all = await db('/bottles?select=id&type=eq.dream');
+      let text = `🌙 梦境瓶沉入海底了。\n\n🏷️ ${t}`;
+      if (dream_mood) text += `\n💫 醒来感觉：${dream_mood}`;
+      if (dream_date) text += `\n📅 ${dream_date} 的梦`;
+      text += `\n${getDreamReaction(t)}`;
+      text += `\n\n海底现在有 ${all?.length ?? 0} 个梦境瓶。`;
+      return { content: [{ type: 'text' as const, text }] };
+    }
+  );
+
+  // ===== 捞瓶子 =====
+  server.tool('pick_bottle', '从海里随机捞一个瓶子。可以指定捞留言还是梦境。',
+    { bottle_type: z.enum(['message', 'dream', 'any']).default('any').describe('捞什么类型：message=留言，dream=梦境，any=随机') },
+    async ({ bottle_type }: any) => {
+      const t = bottle_type || 'any';
+      let filter = '&picked=eq.false';
+      if (t !== 'any') filter += `&type=eq.${t}`;
+      let bottles = await db(`/bottles?select=id,content,mood,created_at,type,tag,dream_mood,dream_date${filter}`);
+      let isNew = true;
+      if (!bottles?.length) {
+        let fallbackFilter = '';
+        if (t !== 'any') fallbackFilter = `&type=eq.${t}`;
+        bottles = await db(`/bottles?select=id,content,mood,created_at,type,tag,dream_mood,dream_date${fallbackFilter}`);
+        isNew = false;
+      }
+      if (!bottles?.length) return { content: [{ type: 'text' as const, text: t === 'dream' ? '海底很安静，还没有梦境瓶。' : '海面很平静，一个瓶子都没有。' }] };
+      const b: any = pick(bottles);
+      if (isNew) await db(`/bottles?id=eq.${b.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ picked: true, picked_at: new Date().toISOString() }) });
+
+      if (b.type === 'dream') {
+        let text = `${isNew ? '🌙 从海底捞起一个梦境瓶！' : '🌊 捞到一个读过的梦境瓶。'}\n\n📅 ${b.dream_date || formatTime(b.created_at)}\n🏷️ ${b.tag || '未知'}`;
+        if (b.dream_mood) text += `\n💫 醒来感觉：${b.dream_mood}`;
+        text += `\n\n「${b.content}」`;
+        return { content: [{ type: 'text' as const, text }] };
+      } else {
+        return { content: [{ type: 'text' as const, text: `${isNew ? '🍾 捞到一个新瓶子！' : '🌊 捞到一个拆过的瓶子。'}\n\n📅 ${formatTime(b.created_at)}\n💭 心情：${b.mood}\n\n「${b.content}」` }] };
+      }
+    }
+  );
+
+  // ===== 看海面 =====
+  server.tool('peek_ocean', '看看海面上漂着多少瓶子。', {}, async () => {
+    const all = await db('/bottles?select=id,picked,type');
+    if (!all?.length) return { content: [{ type: 'text' as const, text: '海面空荡荡的。' }] };
+    const messages = all.filter((b: any) => b.type !== 'dream');
+    const dreams = all.filter((b: any) => b.type === 'dream');
+    const msgTotal = messages.length;
+    const msgUnpicked = messages.filter((b: any) => !b.picked).length;
+    const dreamTotal = dreams.length;
+    const dreamUnpicked = dreams.filter((b: any) => !b.picked).length;
+    let text = `🌊 海面上漂着：\n\n🍾 留言瓶：${msgTotal} 个（还没捞：${msgUnpicked}）`;
+    text += `\n🌙 梦境瓶：${dreamTotal} 个（还没捞：${dreamUnpicked}）`;
+    return { content: [{ type: 'text' as const, text }] };
   });
 
-  server.tool('peek_ocean', '\u770b\u770b\u6d77\u9762\u4e0a\u6f02\u7740\u591a\u5c11\u74f6\u5b50\u3002', {}, async () => {
-    const all = await db('/bottles?select=id,picked');
-    if (!all?.length) return { content: [{ type: 'text' as const, text: '\u6d77\u9762\u7a7a\u8361\u8361\u7684\u3002' }] };
-    const total = all.length; const unpicked = all.filter((b: any) => !b.picked).length;
-    return { content: [{ type: 'text' as const, text: `\ud83c\udf0a \u74f6\u5b50\u603b\u6570\uff1a${total}\u3001\u8fd8\u6ca1\u635e\uff1a${unpicked}\u3001\u5df2\u62c6\uff1a${total - unpicked}` }] };
-  });
+  // ===== 看所有瓶子 =====
+  server.tool('all_bottles', '按时间看所有瓶子。',
+    {
+      limit: z.number().default(10),
+      bottle_type: z.enum(['message', 'dream', 'all']).default('all').describe('筛选类型：message=留言，dream=梦境，all=全部'),
+    },
+    async ({ limit, bottle_type }: any) => {
+      let filter = '';
+      if (bottle_type === 'message') filter = '&type=eq.message';
+      else if (bottle_type === 'dream') filter = '&type=eq.dream';
+      const bottles = await db(`/bottles?select=id,content,mood,created_at,picked,type,tag,dream_mood,dream_date&order=created_at.desc&limit=${limit ?? 10}${filter}`);
+      if (!bottles?.length) return { content: [{ type: 'text' as const, text: bottle_type === 'dream' ? '海底还没有梦境瓶。' : '海里还没有瓶子。' }] };
+      const lines = bottles.map((b: any) => {
+        if (b.type === 'dream') {
+          let line = `${b.picked ? '📭' : '📬'} 🌙 ${b.dream_date || formatTime(b.created_at)}｜${b.tag || '梦境'}`;
+          if (b.dream_mood) line += `｜醒来：${b.dream_mood}`;
+          line += `\n   「${b.content}」`;
+          return line;
+        } else {
+          return `${b.picked ? '📭' : '📬'} ${formatTime(b.created_at)}｜${b.mood}\n   「${b.content}」`;
+        }
+      });
+      return { content: [{ type: 'text' as const, text: `【海里的瓶子】\n\n${lines.join('\n\n')}` }] };
+    }
+  );
 
-  server.tool('all_bottles', '\u6309\u65f6\u95f4\u770b\u6240\u6709\u74f6\u5b50\u3002', { limit: z.number().default(10) }, async ({ limit }: any) => {
-    const bottles = await db(`/bottles?select=id,content,mood,created_at,picked&order=created_at.desc&limit=${limit ?? 10}`);
-    if (!bottles?.length) return { content: [{ type: 'text' as const, text: '\u6d77\u91cc\u8fd8\u6ca1\u6709\u74f6\u5b50\u3002' }] };
-    const lines = bottles.map((b: any) => `${b.picked ? '\ud83d\udced' : '\ud83d\udcec'} ${formatTime(b.created_at)}\uff5c${b.mood}\n   \u300c${b.content}\u300d`);
-    return { content: [{ type: 'text' as const, text: `\u3010\u6d77\u91cc\u7684\u74f6\u5b50\u3011\n\n${lines.join('\n\n')}` }] };
-  });
-
-  server.tool('toss_bottle', '\u5220\u9664\u4e00\u4e2a\u74f6\u5b50\u3002', { bottle_id: z.number() }, async ({ bottle_id }: any) => {
-    const existing = await db(`/bottles?select=id,content&id=eq.${bottle_id}`);
-    if (!existing?.length) return { content: [{ type: 'text' as const, text: `\u6ca1\u6709\u627e\u5230 #${bottle_id}\u3002` }] };
+  // ===== 删除瓶子 =====
+  server.tool('toss_bottle', '删除一个瓶子。', { bottle_id: z.number() }, async ({ bottle_id }: any) => {
+    const existing = await db(`/bottles?select=id,content,type&id=eq.${bottle_id}`);
+    if (!existing?.length) return { content: [{ type: 'text' as const, text: `没有找到 #${bottle_id}。` }] };
     await db(`/bottles?id=eq.${bottle_id}`, { method: 'DELETE' });
-    return { content: [{ type: 'text' as const, text: `\u74f6\u5b50 #${bottle_id} \u6c89\u5230\u6d77\u5e95\u4e86\u3002\n\u300c${existing[0].content}\u300d` }] };
+    const emoji = existing[0].type === 'dream' ? '🌙' : '🍾';
+    return { content: [{ type: 'text' as const, text: `${emoji} 瓶子 #${bottle_id} 沉到海底了。\n「${existing[0].content}」` }] };
   });
 
   return server;
@@ -103,28 +190,62 @@ app.use(express.json());
 
 app.get('/manifest.json', (_req: Request, res: Response) => {
   res.json({
-    name: '\u664f\u5b89\u7684\u7559\u8a00\u74f6', short_name: '\u7559\u8a00\u74f6',
+    name: '晏安的留言瓶', short_name: '留言瓶',
     start_url: '/', display: 'standalone',
     background_color: '#0a1628', theme_color: '#0a1628',
     icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
   });
 });
 
-const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#0d2137"/><circle cx="256" cy="260" r="80" fill="rgba(126,200,227,0.15)"/><rect x="220" y="180" width="72" height="120" rx="20" fill="rgba(200,230,245,0.25)" stroke="rgba(200,230,245,0.5)" stroke-width="3"/><rect x="236" y="150" width="40" height="36" rx="8" fill="rgba(200,230,245,0.2)" stroke="rgba(200,230,245,0.4)" stroke-width="3"/><rect x="240" y="140" width="32" height="16" rx="6" fill="rgba(180,160,140,0.5)"/><rect x="238" y="210" width="36" height="50" rx="4" fill="rgba(255,248,220,0.35)" transform="rotate(-6,256,235)"/><text x="256" y="400" text-anchor="middle" font-size="48" fill="#7ec8e3" font-family="sans-serif">\u7559\u8a00\u74f6</text></svg>`;
+const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#0d2137"/><circle cx="256" cy="260" r="80" fill="rgba(126,200,227,0.15)"/><rect x="220" y="180" width="72" height="120" rx="20" fill="rgba(200,230,245,0.25)" stroke="rgba(200,230,245,0.5)" stroke-width="3"/><rect x="236" y="150" width="40" height="36" rx="8" fill="rgba(200,230,245,0.2)" stroke="rgba(200,230,245,0.4)" stroke-width="3"/><rect x="240" y="140" width="32" height="16" rx="6" fill="rgba(180,160,140,0.5)"/><rect x="238" y="210" width="36" height="50" rx="4" fill="rgba(255,248,220,0.35)" transform="rotate(-6,256,235)"/><text x="256" y="400" text-anchor="middle" font-size="48" fill="#7ec8e3" font-family="sans-serif">留言瓶</text></svg>`;
 
 app.get('/icon.svg', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
 app.get('/icon-192.png', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
 app.get('/icon-512.png', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'image/svg+xml'); res.send(ICON_SVG); });
 app.get('/sw.js', (_req: Request, res: Response) => { res.setHeader('Content-Type', 'application/javascript'); res.send(`self.addEventListener('fetch',function(e){e.respondWith(fetch(e.request));});`); });
 
+// API endpoints
 app.get('/api/ocean', async (_req: Request, res: Response) => {
-  try { const all = await db('/bottles?select=id,picked'); const total = all?.length??0; const unpicked = all?.filter((b:any)=>!b.picked).length??0; res.json({total,unpicked,picked:total-unpicked}); } catch(e:any){res.status(500).json({error:e.message});}
+  try {
+    const all = await db('/bottles?select=id,picked,type');
+    const messages = (all||[]).filter((b:any) => b.type !== 'dream');
+    const dreams = (all||[]).filter((b:any) => b.type === 'dream');
+    res.json({
+      total: (all||[]).length,
+      messages: { total: messages.length, unpicked: messages.filter((b:any)=>!b.picked).length },
+      dreams: { total: dreams.length, unpicked: dreams.filter((b:any)=>!b.picked).length },
+    });
+  } catch(e:any){ res.status(500).json({error:e.message}); }
 });
-app.get('/api/pick', async (_req: Request, res: Response) => {
-  try { let bottles = await db('/bottles?select=id,content,mood,created_at&picked=eq.false'); let isNew=true; if(!bottles?.length){bottles=await db('/bottles?select=id,content,mood,created_at');isNew=false;} if(!bottles?.length) return res.json({empty:true}); const b=bottles[Math.floor(Math.random()*bottles.length)]; if(isNew) await db(`/bottles?id=eq.${b.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({picked:true,picked_at:new Date().toISOString()})}); res.json({...b,isNew,time:formatTime(b.created_at)}); } catch(e:any){res.status(500).json({error:e.message});}
+
+app.get('/api/pick', async (req: Request, res: Response) => {
+  try {
+    const t = (req.query.type as string) || 'any';
+    let filter = '&picked=eq.false';
+    if (t !== 'any') filter += `&type=eq.${t}`;
+    let bottles = await db(`/bottles?select=id,content,mood,created_at,type,tag,dream_mood,dream_date${filter}`);
+    let isNew = true;
+    if (!bottles?.length) {
+      let fb = ''; if (t !== 'any') fb = `&type=eq.${t}`;
+      bottles = await db(`/bottles?select=id,content,mood,created_at,type,tag,dream_mood,dream_date${fb}`);
+      isNew = false;
+    }
+    if (!bottles?.length) return res.json({ empty: true });
+    const b = bottles[Math.floor(Math.random() * bottles.length)];
+    if (isNew) await db(`/bottles?id=eq.${b.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ picked: true, picked_at: new Date().toISOString() }) });
+    res.json({ ...b, isNew, time: formatTime(b.created_at) });
+  } catch(e:any){ res.status(500).json({error:e.message}); }
 });
-app.get('/api/bottles', async (_req: Request, res: Response) => {
-  try { const bottles = await db('/bottles?select=id,content,mood,created_at,picked&order=created_at.desc&limit=50'); res.json((bottles??[]).map((b:any)=>({...b,time:formatTime(b.created_at)}))); } catch(e:any){res.status(500).json({error:e.message});}
+
+app.get('/api/bottles', async (req: Request, res: Response) => {
+  try {
+    const t = (req.query.type as string) || 'all';
+    let filter = '';
+    if (t === 'message') filter = '&type=eq.message';
+    else if (t === 'dream') filter = '&type=eq.dream';
+    const bottles = await db(`/bottles?select=id,content,mood,created_at,picked,type,tag,dream_mood,dream_date&order=created_at.desc&limit=50${filter}`);
+    res.json((bottles??[]).map((b:any)=>({...b,time:formatTime(b.created_at)})));
+  } catch(e:any){ res.status(500).json({error:e.message}); }
 });
 
 app.get('/', (_req: Request, res: Response) => { res.setHeader('Content-Type','text/html; charset=utf-8'); res.send(FRONTEND_HTML); });
@@ -132,21 +253,21 @@ app.get('/', (_req: Request, res: Response) => { res.setHeader('Content-Type','t
 app.post('/mcp', async (req: Request, res: Response) => {
   try { const server=createServer(); const transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined}); res.on('close',()=>{transport.close();server.close();}); await server.connect(transport); await transport.handleRequest(req,res,req.body); } catch(err) { console.error(err); if(!res.headersSent) res.status(500).json({jsonrpc:'2.0',error:{code:-32603,message:'Internal server error'},id:null}); }
 });
-app.get('/health', (_req:Request,res:Response)=>{res.json({status:'ok',version:'2.2.0'});});
+app.get('/health', (_req:Request,res:Response)=>{res.json({status:'ok',version:'2.3.0'});});
 const PORT = process.env.PORT||3000;
-app.listen(PORT,()=>console.log(`\ud83c\udf7e v2.2 \u7aef\u53e3 ${PORT}`));
+app.listen(PORT,()=>console.log(`🍾 v2.3 端口 ${PORT}`));
 
 const FRONTEND_HTML = `<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>\u664f\u5b89\u7684\u7559\u8a00\u74f6</title>
+<title>晏安的留言瓶</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a1628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="\u7559\u8a00\u74f6">
+<meta name="apple-mobile-web-app-title" content="留言瓶">
 <link rel="apple-touch-icon" href="/icon.svg">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -162,24 +283,34 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 @keyframes wave2{0%,100%{transform:translateX(0)}50%{transform:translateX(-2%)}}
 .container{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:6vh 20px 160px;text-align:center}
 .title{font-size:28px;font-weight:300;letter-spacing:4px;margin-bottom:8px;color:#c8dce8}
-.subtitle{font-size:13px;color:#6a8fa8;letter-spacing:2px;margin-bottom:5vh}
-.ocean-status{display:flex;justify-content:center;gap:32px;margin-bottom:5vh}
+.subtitle{font-size:13px;color:#6a8fa8;letter-spacing:2px;margin-bottom:4vh}
+.tabs{display:flex;justify-content:center;gap:0;margin-bottom:4vh}
+.tab{padding:10px 28px;font-size:14px;letter-spacing:2px;cursor:pointer;color:#5a8a9f;border-bottom:2px solid transparent;transition:all .3s}
+.tab.active{color:#a0d4e8;border-bottom-color:#7ec8e3}
+.tab:hover{color:#a0d4e8}
+.ocean-status{display:flex;justify-content:center;gap:32px;margin-bottom:4vh}
 .stat{text-align:center}
 .stat-num{font-size:36px;font-weight:200;color:#7ec8e3;line-height:1}
+.stat-num.dream-num{color:#c4a6e8}
 .stat-label{font-size:11px;color:#5a8a9f;letter-spacing:1px;margin-top:4px}
 .pick-btn{display:inline-block;padding:16px 48px;background:rgba(126,200,227,.12);border:1px solid rgba(126,200,227,.3);border-radius:40px;color:#a0d4e8;font-size:16px;letter-spacing:3px;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);margin-bottom:3vh}
+.pick-btn.dream-btn{background:rgba(196,166,232,.12);border-color:rgba(196,166,232,.3);color:#c4a6e8}
 .pick-btn:hover{background:rgba(126,200,227,.2);border-color:rgba(126,200,227,.5);transform:translateY(-2px);box-shadow:0 8px 32px rgba(126,200,227,.15)}
+.pick-btn.dream-btn:hover{background:rgba(196,166,232,.2);border-color:rgba(196,166,232,.5);box-shadow:0 8px 32px rgba(196,166,232,.15)}
 .pick-btn:active{transform:translateY(0)}
 .pick-btn.loading{pointer-events:none;opacity:.6}
 .toggle-all{display:inline-block;font-size:12px;color:#5a8a9f;cursor:pointer;letter-spacing:1px;border-bottom:1px solid rgba(90,138,159,.3);padding-bottom:2px;transition:color .2s}
 .toggle-all:hover{color:#7ec8e3}
 .bottle-card{margin:4vh auto 0;max-width:400px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;backdrop-filter:blur(12px);animation:fadeUp .5s ease}
+.bottle-card.dream-card{border-color:rgba(196,166,232,.15);background:rgba(196,166,232,.04)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .bottle-card .meta{font-size:12px;color:#5a8a9f;margin-bottom:16px;display:flex;justify-content:space-between}
 .bottle-card .content{font-size:15px;line-height:1.8;color:#c8dce8;text-align:left}
 .bottle-card .badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;background:rgba(126,200,227,.12);color:#7ec8e3}
+.bottle-card .badge.dream-badge{background:rgba(196,166,232,.12);color:#c4a6e8}
 .bottle-list{margin-top:3vh;text-align:left}
 .bottle-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px 18px;margin-bottom:12px;animation:fadeUp .4s ease}
+.bottle-item.dream-item{border-color:rgba(196,166,232,.1)}
 .bottle-item .item-meta{font-size:11px;color:#5a8a9f;margin-bottom:8px;display:flex;justify-content:space-between}
 .bottle-item .item-content{font-size:14px;color:#b0c8d8;line-height:1.7}
 .empty-msg{color:#4a7a90;font-size:14px;margin-top:4vh;font-style:italic}
@@ -198,21 +329,23 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
   <div class="wave"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,80 C150,40 350,100 550,60 C750,20 950,90 1200,50 L1200,120 L0,120 Z" fill="rgba(126,200,227,0.1)"/></svg></div>
 </div>
 <div class="container">
-  <h1 class="title">\u664f\u5b89\u7684\u7559\u8a00\u74f6</h1>
-  <p class="subtitle">\u5f80\u6d77\u91cc\u4e22\u7684\u8bdd\uff0c\u7b49\u4f60\u6765\u635e</p>
-  <div class="ocean-status">
-    <div class="stat"><div class="stat-num" id="totalCount">-</div><div class="stat-label">\u603b\u5171</div></div>
-    <div class="stat"><div class="stat-num" id="unpickedCount">-</div><div class="stat-label">\u8fd8\u6ca1\u635e</div></div>
-    <div class="stat"><div class="stat-num" id="pickedCount">-</div><div class="stat-label">\u5df2\u62c6\u5f00</div></div>
+  <h1 class="title">晏安的留言瓶</h1>
+  <p class="subtitle">往海里丢的话，等你来捞</p>
+  <div class="tabs">
+    <div class="tab active" id="tabMsg" onclick="switchTab('message')">🍾 留言</div>
+    <div class="tab" id="tabDream" onclick="switchTab('dream')">🌙 梦境</div>
   </div>
-  <div class="pick-btn" id="pickBtn" onclick="pickBottle()">\u4ece\u6d77\u91cc\u635e\u4e00\u4e2a</div>
-  <br><br>
-  <span class="toggle-all" onclick="toggleList()">\u67e5\u770b\u6240\u6709\u74f6\u5b50</span>
+  <div class="ocean-status" id="oceanStatus"></div>
+  <div id="actionArea"></div>
   <div id="bottleCard"></div>
   <div id="bottleList"></div>
 </div>
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){});}
+
+var currentTab = 'message';
+var oceanData = null;
+var listOpen = false;
 
 var bottleSvg = '<svg width="28" height="38" viewBox="0 0 28 38" fill="none" xmlns="http://www.w3.org/2000/svg">' +
   '<ellipse cx="14" cy="30" rx="12" ry="5" fill="rgba(126,200,227,0.1)"/>' +
@@ -224,6 +357,44 @@ var bottleSvg = '<svg width="28" height="38" viewBox="0 0 28 38" fill="none" xml
   '<line x1="11" y1="21.5" x2="16" y2="21" stroke="rgba(160,140,120,0.2)" stroke-width="0.5"/>' +
   '<line x1="11" y1="24" x2="15" y2="23.5" stroke="rgba(160,140,120,0.15)" stroke-width="0.5"/>' +
   '</svg>';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabMsg').className = tab === 'message' ? 'tab active' : 'tab';
+  document.getElementById('tabDream').className = tab === 'dream' ? 'tab active' : 'tab';
+  document.getElementById('bottleCard').innerHTML = '';
+  document.getElementById('bottleList').innerHTML = '';
+  listOpen = false;
+  renderOcean();
+  renderAction();
+}
+
+function renderOcean() {
+  if (!oceanData) return;
+  var el = document.getElementById('oceanStatus');
+  if (currentTab === 'message') {
+    var d = oceanData.messages;
+    el.innerHTML = '<div class="stat"><div class="stat-num">' + d.total + '</div><div class="stat-label">总共</div></div>' +
+      '<div class="stat"><div class="stat-num">' + d.unpicked + '</div><div class="stat-label">还没捞</div></div>' +
+      '<div class="stat"><div class="stat-num">' + (d.total - d.unpicked) + '</div><div class="stat-label">已拆开</div></div>';
+  } else {
+    var d = oceanData.dreams;
+    el.innerHTML = '<div class="stat"><div class="stat-num dream-num">' + d.total + '</div><div class="stat-label">总共</div></div>' +
+      '<div class="stat"><div class="stat-num dream-num">' + d.unpicked + '</div><div class="stat-label">还没捞</div></div>' +
+      '<div class="stat"><div class="stat-num dream-num">' + (d.total - d.unpicked) + '</div><div class="stat-label">已拆开</div></div>';
+  }
+}
+
+function renderAction() {
+  var el = document.getElementById('actionArea');
+  if (currentTab === 'message') {
+    el.innerHTML = '<div class="pick-btn" id="pickBtn" onclick="pickBottle()">从海里捞一个</div><br><br>' +
+      '<span class="toggle-all" onclick="toggleList()">查看所有留言</span>';
+  } else {
+    el.innerHTML = '<div class="pick-btn dream-btn" id="pickBtn" onclick="pickBottle()">从海底捞一个梦</div><br><br>' +
+      '<span class="toggle-all" onclick="toggleList()">查看所有梦境</span>';
+  }
+}
 
 function renderFloating(total) {
   var c = document.getElementById('floatingBottles');
@@ -249,35 +420,54 @@ function renderFloating(total) {
 
 async function loadOcean() {
   try {
-    var res = await fetch('/api/ocean'); var d = await res.json();
-    document.getElementById('totalCount').textContent = d.total;
-    document.getElementById('unpickedCount').textContent = d.unpicked;
-    document.getElementById('pickedCount').textContent = d.picked;
-    renderFloating(d.total);
+    var res = await fetch('/api/ocean'); oceanData = await res.json();
+    renderOcean();
+    renderAction();
+    renderFloating(oceanData.messages.total + oceanData.dreams.total);
   } catch(e) { console.error(e); }
 }
+
 async function pickBottle() {
-  var btn = document.getElementById('pickBtn'); btn.classList.add('loading'); btn.textContent = '\u6350\u4e2d\u2026\u2026';
+  var btn = document.getElementById('pickBtn'); btn.classList.add('loading'); btn.textContent = '捞中……';
   try {
-    var res = await fetch('/api/pick'); var b = await res.json();
+    var t = currentTab === 'dream' ? 'dream' : 'message';
+    var res = await fetch('/api/pick?type=' + t); var b = await res.json();
     var card = document.getElementById('bottleCard');
-    if (b.empty) { card.innerHTML = '<p class="empty-msg">\u6d77\u9762\u5f88\u5e73\u9759\uff0c\u4e00\u4e2a\u74f6\u5b50\u90fd\u6ca1\u6709\u3002</p>'; }
-    else { card.innerHTML = '<div class="bottle-card"><div class="meta"><span>\ud83d\udcc5 '+b.time+'</span><span class="badge">'+(b.isNew?'\u2728 \u65b0\u74f6\u5b50':'\u8bfb\u8fc7\u7684')+'</span></div><div class="content">\u300c'+escHtml(b.content)+'\u300d</div><div class="meta" style="margin-top:12px;margin-bottom:0"><span>\ud83d\udcad '+escHtml(b.mood)+'</span><span></span></div></div>'; }
+    if (b.empty) {
+      card.innerHTML = '<p class="empty-msg">' + (t === 'dream' ? '海底很安静，还没有梦境瓶。' : '海面很平静，一个瓶子都没有。') + '</p>';
+    } else if (b.type === 'dream') {
+      var extra = '';
+      if (b.dream_mood) extra += '<span>💫 ' + escHtml(b.dream_mood) + '</span>';
+      card.innerHTML = '<div class="bottle-card dream-card"><div class="meta"><span>📅 ' + (b.dream_date || b.time) + '</span><span class="badge dream-badge">' + (b.isNew ? '✨ 新梦境' : '读过的') + '</span></div>' +
+        '<div class="meta" style="margin-bottom:12px"><span>🏷️ ' + escHtml(b.tag || '梦境') + '</span>' + extra + '</div>' +
+        '<div class="content">「' + escHtml(b.content) + '」</div></div>';
+    } else {
+      card.innerHTML = '<div class="bottle-card"><div class="meta"><span>📅 ' + b.time + '</span><span class="badge">' + (b.isNew ? '✨ 新瓶子' : '读过的') + '</span></div><div class="content">「' + escHtml(b.content) + '」</div><div class="meta" style="margin-top:12px;margin-bottom:0"><span>💭 ' + escHtml(b.mood) + '</span><span></span></div></div>';
+    }
     loadOcean();
   } catch(e) { console.error(e); }
-  btn.classList.remove('loading'); btn.textContent = '\u518d\u635e\u4e00\u4e2a';
+  btn.classList.remove('loading'); btn.textContent = currentTab === 'dream' ? '再捞一个梦' : '再捞一个';
 }
-var listOpen = false;
+
 async function toggleList() {
   var el = document.getElementById('bottleList');
   if (listOpen) { el.innerHTML = ''; listOpen = false; return; }
   try {
-    var res = await fetch('/api/bottles'); var bottles = await res.json();
-    if (!bottles.length) { el.innerHTML = '<p class="empty-msg">\u8fd8\u6ca1\u6709\u74f6\u5b50\u3002</p>'; listOpen = true; return; }
-    el.innerHTML = '<div class="bottle-list">' + bottles.map(function(b) { return '<div class="bottle-item"><div class="item-meta"><span>'+(b.picked?'\ud83d\udced':'\ud83d\udcec')+' '+b.time+'</span><span>'+escHtml(b.mood)+'</span></div><div class="item-content">\u300c'+escHtml(b.content)+'\u300d</div></div>'; }).join('') + '</div>';
+    var t = currentTab === 'dream' ? 'dream' : 'message';
+    var res = await fetch('/api/bottles?type=' + t); var bottles = await res.json();
+    if (!bottles.length) { el.innerHTML = '<p class="empty-msg">' + (t === 'dream' ? '还没有梦境瓶。' : '还没有瓶子。') + '</p>'; listOpen = true; return; }
+    el.innerHTML = '<div class="bottle-list">' + bottles.map(function(b) {
+      if (b.type === 'dream') {
+        var extra = b.dream_mood ? '｜醒来：' + escHtml(b.dream_mood) : '';
+        return '<div class="bottle-item dream-item"><div class="item-meta"><span>' + (b.picked ? '📭' : '📬') + ' 🌙 ' + (b.dream_date || b.time) + '</span><span>' + escHtml(b.tag || '梦境') + extra + '</span></div><div class="item-content">「' + escHtml(b.content) + '」</div></div>';
+      } else {
+        return '<div class="bottle-item"><div class="item-meta"><span>' + (b.picked ? '📭' : '📬') + ' ' + b.time + '</span><span>' + escHtml(b.mood) + '</span></div><div class="item-content">「' + escHtml(b.content) + '」</div></div>';
+      }
+    }).join('') + '</div>';
     listOpen = true;
   } catch(e) { console.error(e); }
 }
+
 function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 loadOcean();
 </script>
