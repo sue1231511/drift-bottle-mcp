@@ -297,7 +297,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .pick-btn{display:inline-block;padding:16px 48px;background:rgba(126,200,227,.12);border:1px solid rgba(126,200,227,.3);border-radius:40px;color:#a0d4e8;font-size:16px;letter-spacing:3px;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);margin-bottom:3vh}
 .pick-btn.dream-btn{background:rgba(196,166,232,.08);border-color:rgba(196,166,232,.2);color:rgba(196,166,232,0.6)}
 .pick-btn:hover{background:rgba(126,200,227,.2);border-color:rgba(126,200,227,.5);transform:translateY(-2px);box-shadow:0 8px 32px rgba(126,200,227,.15)}
-.pick-btn.dream-btn:hover{background:rgba(196,166,232,.2);border-color:rgba(196,166,232,.5);box-shadow:0 8px 32px rgba(196,166,232,.15)}
+.pick-btn.dream-btn:hover{background:rgba(196,166,232,.15);border-color:rgba(196,166,232,.35);box-shadow:0 8px 32px rgba(196,166,232,.1)}
 .pick-btn:active{transform:translateY(0)}
 .pick-btn.loading{pointer-events:none;opacity:.6}
 .toggle-all{display:inline-block;font-size:12px;color:#5a8a9f;cursor:pointer;letter-spacing:1px;border-bottom:1px solid rgba(90,138,159,.3);padding-bottom:2px;transition:color .2s}
