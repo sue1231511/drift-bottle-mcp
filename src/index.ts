@@ -362,7 +362,7 @@ var bottleSvg = '<svg width="28" height="38" viewBox="0 0 28 38" fill="none" xml
 function switchTab(tab) {
   currentTab = tab;
   document.getElementById('tabMsg').className = tab === 'message' ? 'tab active' : 'tab';
-  document.getElementById('tabDream').className = tab === 'dream' ? 'tab active' : 'tab';
+  document.getElementById('tabDream').className = tab === 'dream' ? 'tab active-dream' : 'tab';
   document.getElementById('bottleCard').innerHTML = '';
   document.getElementById('bottleList').innerHTML = '';
   listOpen = false;
