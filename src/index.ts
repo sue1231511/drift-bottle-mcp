@@ -52,7 +52,7 @@ function getOceanReaction(mood: string): string {
 }
 
 function createServer() {
-  const server: any = new McpServer({ name: 'drift-bottle', version: '2.2.0' });
+  const server: any = new McpServer({ name: 'drift-bottle', version: '2.2.1' });
 
   server.tool('drop_bottle', '\u5f80\u6d77\u91cc\u4e22\u4e00\u4e2a\u7559\u8a00\u74f6\u3002\u5199\u7ed9\u732b\u732b\u7684\u8bdd\uff0c\u4ec0\u4e48\u65f6\u5019\u5979\u6765\u635e\u90fd\u80fd\u770b\u5230\u3002',
     { content: z.string(), mood: z.string() },
