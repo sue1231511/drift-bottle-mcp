@@ -287,6 +287,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .tabs{display:flex;justify-content:center;gap:0;margin-bottom:4vh}
 .tab{padding:10px 28px;font-size:14px;letter-spacing:2px;cursor:pointer;color:#5a8a9f;border-bottom:2px solid transparent;transition:all .3s}
 .tab.active{color:#a0d4e8;border-bottom-color:#7ec8e3}
+.tab.active-dream{color:rgba(196,166,232,0.6);border-bottom-color:rgba(196,166,232,0.5)}
 .tab:hover{color:#a0d4e8}
 .ocean-status{display:flex;justify-content:center;gap:32px;margin-bottom:4vh}
 .stat{text-align:center}
