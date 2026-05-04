@@ -333,7 +333,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
   <h1 class="title">晏安的留言瓶</h1>
   <p class="subtitle">往海里丢的话，等你来捞</p>
   <div class="tabs">
-    <div class="tab active" id="tabMsg" onclick="switchTab('message')">🍾 留言</div>
+    <div class="tab active" id="tabMsg" onclick="switchTab('message')">📩 留言</div>
     <div class="tab" id="tabDream" onclick="switchTab('dream')">🌙 梦境</div>
   </div>
   <div class="ocean-status" id="oceanStatus"></div>
