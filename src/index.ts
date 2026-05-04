@@ -307,7 +307,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#0a1628 0%,#0d2137 30%,#
 .bottle-card .meta{font-size:12px;color:#5a8a9f;margin-bottom:16px;display:flex;justify-content:space-between}
 .bottle-card .content{font-size:15px;line-height:1.8;color:#c8dce8;text-align:left}
 .bottle-card .badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;background:rgba(126,200,227,.12);color:#7ec8e3}
-.bottle-card .badge.dream-badge{background:rgba(196,166,232,.12);color:#c4a6e8}
+.bottle-card .badge.dream-badge{background:rgba(196,166,232,.08);color:rgba(196,166,232,0.6)}
 .bottle-list{margin-top:3vh;text-align:left}
 .bottle-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px 18px;margin-bottom:12px;animation:fadeUp .4s ease}
 .bottle-item.dream-item{border-color:rgba(196,166,232,.1)}
